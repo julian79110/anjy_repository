@@ -1,0 +1,12 @@
+.wrapper {
+    height: 100vh;
+}
+
+.login {
+    width: 300px;
+    padding: 20px;
+    height: min-content;
+    border-radius: 5px;
+    color: #333; /* Change text color to a dark color, e.g., dark gray */
+    background-color: #f8f9fa; /* Change background color to a light color, e.g., light gray */
+}
