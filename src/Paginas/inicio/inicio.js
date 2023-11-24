@@ -23,23 +23,21 @@ const Inicio = () => {
 
     return (
         <div>
-            <Navbar bg="dark" variant="dark" expand="lg">
+            <Navbar bg="dark" variant="dark" expand="lg" classname="custom_navbar">
                 <Container>
-                    <Navbar.Brand href="#home">Mascotas</Navbar.Brand>
+                    <Navbar.Brand ><img src="logo_mascotas.jpeg" width="80px" height="80px"/></Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link as={Link} to="#">Inicio</Nav.Link>
                             <Nav.Link as={Link} to="/login">Login</Nav.Link>
                             <Nav.Link as={Link} to="/register">Registro</Nav.Link>
-                            <Nav.Link as={Link} to="/products">Productos</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <h1>Bienvendio:{name ? name : 'Invitado'}</h1>
             <Container className="mt-4">
-                <h2>Últimas Publicaciones</h2>
+                <h2>Nuestros Productos</h2>
                 <div className="row">
                     {productos.map((producto) => (
                         <Card key={producto._id} style={{ width: '18rem' }} className="m-3">
@@ -47,9 +45,10 @@ const Inicio = () => {
                             <Card.Body>
                                 <Card.Title>{producto.nombre}</Card.Title>
                                 <Card.Text>
-                                    {producto.descripcion}
+                                    Marca: {producto.marca}<br/>
+                                    Descripcion:{producto.descripcion}<br/>
+                                    Precio:{producto.precio}
                                 </Card.Text>
-                                <Button variant="primary">Ver Mas</Button>
                             </Card.Body>
                         </Card>
                     ))}

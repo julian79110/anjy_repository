@@ -11,6 +11,12 @@ const citaSchema = new mongoose.Schema(
        descripcion:{
             type:String
        },
+       precio:{
+          type:Number
+       },
+       emailU:{
+          type:String
+       },
        fechaCreacion:{
         type: Date,
         default: Date.now

@@ -1,11 +1,4 @@
-.centrar{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-h2{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 10px;
+.tabla{
+    margin-left: 15%;
+    margin-right: 15%;
 }

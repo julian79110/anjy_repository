@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Navbar, Nav, Container} from 'react-bootstrap';
 import axios from 'axios';
 
 function LoginForm() {
@@ -41,9 +42,22 @@ function LoginForm() {
       const response = await axios.post('http://localhost:8888/api/v1/devcamps/usuarios/login', formData);
 
       if (response.data.success) {
-        localStorage.setItem('nombre', response.data.nombreUsuario);
-        alert('Inicio de sesión exitoso!');
-        navigate('/');
+        // Guardar el token en localStorage
+        localStorage.setItem('token', response.data.token);
+
+        // Validar el rol antes de redirigir
+        const userRole = response.data.rol;
+        const email = response.data.emailU
+        if (userRole === 'cliente') {
+          alert('Inicio de sesión exitoso!');
+          navigate(`/cliente/${email}`)
+        } else if(userRole ==='publicador'){
+          alert('inicio de sesión exitoso!')
+          navigate(`/publicador/${email}`)
+        } else {
+          // Si el rol no es válido, puedes redirigir a una página de acceso no autorizado
+          alert('Acceso no autorizado');
+        }
       } else {
         alert('Error en el inicio de sesión. Por favor, verifica tus datos.');
       }
@@ -53,10 +67,24 @@ function LoginForm() {
   };
 
   return (
-    <div className='wrapper bg-dark d-flex align-items-center justify-content-center w-100'>
+    <div>
+    <Navbar bg="dark" variant="dark" expand="lg" classname="custom_navbar">
+                <Container>
+                    <Navbar.Brand ><img src="logo_mascotas.jpeg" width="80px" height="80px"/></Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="me-auto">
+                            <Nav.Link as={Link} to="/">Inicio</Nav.Link>
+                            <Nav.Link as={Link} to="#">Login</Nav.Link>
+                            <Nav.Link as={Link} to="/register">Registro</Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+    <div className='wrapper d-flex align-items-center justify-content-center w-100'>
       <div className='login'>
         <h2>Formulario de Inicio de Sesión</h2>
-        <form className='needs-validation' noValidate onSubmit={handleSubmit}>
+        <form className='needs-validation' autoComplete='off' noValidate onSubmit={handleSubmit}>
           <div className='form-group was-validated mb-2'>
             <label htmlFor='email' className='form-label'>Email</label>
             <input
@@ -86,14 +114,13 @@ function LoginForm() {
             <div className='invalid-feedback'>La contraseña debe tener entre 6 y 20 caracteres y no puede estar vacía.</div>
           </div>
 
-          <div className='form-group form-check mb-2'>
-            <input type='checkbox' className='form-check-input' />
-            <label htmlFor='check' className='form-check-label'>Recordar</label>
-          </div>
-
           <button type='submit' className='btn btn-success w-100 mt-2'>Iniciar Sesión</button>
         </form>
+        <p className="mt-2">
+          ¿No tienes Cuenta? <Link to="/login">Registrate Aqui</Link>.
+        </p>
       </div>
+    </div>
     </div>
   );
 }

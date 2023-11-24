@@ -1,0 +1,31 @@
+.wrapper {
+    height: 100vh;
+}
+
+.login {
+    width: 300px;
+    padding: 20px;
+    height: min-content;
+    border-radius: 5px;
+    color: #333;
+    background-color: #f8f9fa; 
+}
+.centrar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.centrar form{
+    border: 1px solid black;
+    width: 700px;
+    padding: 20px;
+    box-shadow: 4px 4px 20px black;
+}
+.centrar form button{
+    margin-left: 35%;
+}
+h2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

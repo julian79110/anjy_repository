@@ -12,6 +12,9 @@ const userSchema = new mongoose.Schema(
         },
         contraseña:{
             type:String
+        },
+        rol:{
+            type:String
         }
     }
 )
@@ -33,7 +36,8 @@ userSchema.methods.ObtenerTokenJWT= function(){
         id: this._id,
         nombreU: this.nombreU,
         contraseña: this.contraseña,
-        email: this.email,
+        emailU: this.emailU,
+        rol: this.rol
     }, 
         JWT_SECRET_KEY, 
         { 

@@ -4,13 +4,14 @@ const userModel = require ('../models/usuarioModel')
 
 router.post('/register', 
             async(req, res)=>{
-                const {nombreU, emailU, contraseña} = req.body;
+                const {nombreU, emailU, contraseña,rol} = req.body;
                 try {
                     const user = 
                     await userModel.create({
                         nombreU,
                         emailU,
-                        contraseña
+                        contraseña,
+                        rol
                     })
             res
                 .status(201)
@@ -33,48 +34,57 @@ router.post('/register',
            
 //login 
 router.post('/login', async (req, res) => {
-    
-    const {emailU,contraseña}=req.body;
+    const { emailU, contraseña } = req.body;
 
-    //si no llega email o password
-    if(!emailU || !contraseña){
+    if (!emailU || !contraseña) {
         res.status(400).json({
-            success:false,
+            success: false,
             message: "Debe ingresar el email o password"
-        })
-    }else{
+        });
+    } else {
         try {
-            //encontrar usuario con el password
-            const user = await userModel.findOne({ emailU }).select("+contraseña")
-            
-            //console.log(user)
+            const user = await userModel.findOne({ emailU }).select("+contraseña");
+
             if (!user) {
                 res.status(400).json({
-                    success:false,
-                    msg:"no se encontro el usuario"
-                })
-            }
-            else{
-                //comparar
-                const isMatch = await user.comparePassword(contraseña)
-                if(!isMatch){
+                    success: false,
+                    msg: "No se encontró el usuario"
+                });
+            } else {
+                const isMatch = await user.comparePassword(contraseña);
+
+                if (!isMatch) {
                     res.status(400).json({
                         success: false,
-                        msg:"contraseña incorrecta"
-                        
-                    })
-                }else{
-                    res.status(200).json({
-                        success: true,
-                        msg:"la contraseña es correcta",
-                        token: user.ObtenerTokenJWT()
-                    })
+                        msg: "Contraseña incorrecta"
+                    });
+                } else {
+                    // Verificar el rol antes de generar el token
+                    if (user.rol === 'cliente' || user.rol === 'publicador') {
+                        const token = user.ObtenerTokenJWT();
+                        res.status(200).json({
+                            success: true,
+                            msg: "Contraseña correcta",
+                            token: token,
+                            rol:user.rol,
+                            emailU:user.emailU
+                        });
+                    } else {
+                        res.status(403).json({
+                            success: false,
+                            msg: "Acceso no autorizado"
+                        });
+                    }
                 }
             }
         } catch (error) {
-            
+            console.error(error);
+            res.status(500).json({
+                success: false,
+                msg: "Error en el servidor"
+            });
         }
     }
-})
+});
 
 module.exports = router

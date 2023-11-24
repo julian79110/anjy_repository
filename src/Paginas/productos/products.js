@@ -1,68 +1,74 @@
-import React,{useState} from "react";
-import { Link } from "react-router-dom";
+import React,{useState, useEffect} from "react";
+import { Link, useParams } from "react-router-dom";
 import { Navbar, Nav, Container, Form, Button} from 'react-bootstrap';
 import axios from 'axios'; 
 
 const Products = () => {
-    const [successMessage, setSuccessMessage] = useState("");
-    const [formData, setFormData] = useState({
-        nombre: "",
-        marca: "",
-        descripcion: ""
+    const { email } = useParams();
+  const [emailValue, setEmailValue] = useState(email);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [formData, setFormData] = useState({
+    nombre: "",
+    marca: "",
+    descripcion: "",
+    precio: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
+  };
 
-    const handleChange = (e) => {
-        setFormData({
+  useEffect(() => {
+    setEmailValue(email);
+  }, [email]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+        const response = await axios.post("http://localhost:8888/api/v1/products/", {
             ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+            emailU: email,  // Usar el valor de email en lugar de emailU
+          });
+      // Verifica si la solicitud fue exitosa antes de mostrar el mensaje
+      if (response.data.success) {
+        setSuccessMessage("Producto registrado con éxito");
+      } else {
+        setSuccessMessage(""); // Limpia el mensaje si la solicitud no fue exitosa
+      }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            const response = await axios.post("http://localhost:8888/api/v1/products/", formData);
-            console.log(response.data);
-
-            // Verifica si la solicitud fue exitosa antes de mostrar el mensaje
-            if (response.data.success) {
-                setSuccessMessage("Producto registrado con éxito");
-            } else {
-                setSuccessMessage(""); // Limpia el mensaje si la solicitud no fue exitosa
-            }
-
-            // Puedes redirigir al usuario a otra página después de la creación exitosa del producto
-            // history.push("/otra-ruta");
-        } catch (error) {
-            console.error("Error al enviar la solicitud:", error);
-        }
-    };
+      // Puedes redirigir al usuario a otra página después de la creación exitosa del producto
+      // history.push("/otra-ruta");
+    } catch (error) {
+      console.error("Error al enviar la solicitud:", error);
+    }
+  };
     return (
         <div>
         <Navbar bg="dark" variant="dark" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">Mascotas</Navbar.Brand>
+          <Navbar.Brand href="#home">Publicador</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link as={Link} to="/">Inicio</Nav.Link>
-              <Nav.Link as={Link} to="/login">Login</Nav.Link>
-              <Nav.Link as={Link} to="/register">Registro</Nav.Link>
-              <Nav.Link as={Link} to="/products">Productos</Nav.Link>
+              <Nav.Link as={Link} to={`/publicador/${email}`}>Volver</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
         <br/>
         {successMessage && (
-                <div className="alert alert-success mt-3" role="alert">
-                    {successMessage}
-                </div>
-            )}
+    <div className="alert alert-success alert-dismissible mt-3" role="alert">
+        <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {successMessage}
+    </div>
+)}
         <h2>Registro</h2>
         <div className="centrar">
-            <Form autoComplete="off" onSubmit={handleSubmit}> 
+            <Form autoComplete="off" onSubmit={handleSubmit} encType="multipart/form-data"> 
                 <Form.Group className="mb-3" controlId="formNombre">
                     <Form.Label>Nombre Producto</Form.Label>
                     <Form.Control
@@ -85,7 +91,7 @@ const Products = () => {
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formContraseña">
+                <Form.Group className="mb-3" controlId="formDescripcion">
                     <Form.Label>Descripcion</Form.Label>
                     <Form.Control
                         type="text"
@@ -96,8 +102,29 @@ const Products = () => {
                     />
                 </Form.Group>
 
+                <Form.Group className="mb-3" controlId="formContraseña">
+                    <Form.Label>Precio</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Ingrese precio"
+                        name="precio"
+                        value={formData.precio}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formEmailU">
+                    <Form.Control
+                    type="text"
+                    placeholder=""
+                    name="emailU"
+                    value={emailValue}
+                    readOnly
+                    />
+                </Form.Group>
+
                 <Button variant="primary" type="submit">
-                    Registrarse
+                    Registra el Producto
                 </Button>
             </Form>
             </div>
